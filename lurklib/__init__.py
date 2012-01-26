@@ -58,7 +58,7 @@ class Client(core._Core):
                 elif event_t == 'CTCP_REPLY':
                     self.on_ctcp_reply(event_c[0], event_c[2])
                 elif event_t == 'MODE':
-                    if event_c[0][0] == self.current_nick:
+                    if event_c[0] == self.current_nick:
                         self.on_umode(event_c[1])
                     else:
                         self.on_cmode(event_c[0], event_c[1], event_c[2])
