@@ -351,7 +351,7 @@ class _Core(variables._Variables, exceptions._Exceptions,
             elif segments[1] == 'KICK':
                 who = self._from_(segments[0].replace(':', '', 1))
                 if self.current_nick == segments[3]:
-                    del self.channels[segments[2]]['USERS']
+                    del self.channels[segments[2]]
                 else:
                     del self.channels[segments[2]]['USERS'][segments[3]]
                 reason = ' '.join(segments[4:]).replace(':', '', 1)
