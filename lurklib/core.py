@@ -123,7 +123,7 @@ class _Core(variables._Variables, exceptions._Exceptions,
                 self.stepback()
 
     def _mcon(self):
-        """ Buffer IRC data and handle PING/PONG. """
+        """ Buffer IRC data. """
         with self.lock:
             sdata = ' '
             while sdata[-1] != self._crlf[-1]:
@@ -138,8 +138,6 @@ class _Core(variables._Variables, exceptions._Exceptions,
 
             lines = sdata.split(self._crlf)
             for line in lines:
-                if line.find('PING :') == 0:
-                    self.send(line.replace('PING', 'PONG'))
                 if line != '':
                     self._buffer.append(line)
 
@@ -152,14 +150,6 @@ class _Core(variables._Variables, exceptions._Exceptions,
                 self._resetbuffer()
                 self._mcon()
             msg = self._buffer[self._index]
-            while self.find(msg, 'PING :'):
-                self._index += 1
-                try:
-                    msg = self._buffer[self._index]
-                except IndexError:
-                    self._mcon()
-                    self.stepback(append=False)
-
             self._index += 1
             return msg
 
@@ -388,6 +378,10 @@ class _Core(variables._Variables, exceptions._Exceptions,
                     if who[0] in self.channels[channel]['USERS']:
                         del self.channels[channel]['USERS'][who[0]]
                 return 'QUIT', (who, msg)
+
+            elif segments[1] == 'PING':
+                self.send(data.replace('PING', 'PONG'))
+                return None
 
             elif segments[1] == '250':
                 self.lusers['HIGHESTCONNECTIONS'] = segments[6]
